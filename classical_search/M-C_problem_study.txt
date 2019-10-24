@@ -1,0 +1,63 @@
+
+
+
+====================== Missionaries(M) and Cannibals(C) problem ======================
+|-- Problem Description
+    N missionaries and N cannibals are on one side of a river, along with a boat 
+    that can hold at most K people. Find a way to get everyone to the other side 
+    without ever leaving a group of missionaries in one place outnumbered by the 
+    cannibals in that place.
+
+
+|-- Abstract Structure: SCATTER (記憶：展開樹狀圖就像散射一般)
+    (S) State: 
+        |-- (m, c, b): This would represent the number of missionaries on the wrong side, 
+                       cannibals on the wrong side and number of boats on the wrong side. 
+        |-- initial state: (N, N, 1)
+    (C) Constraint: 
+        |-- Constraint:
+            1. (# of M) >= (# of C) on three places, both sides and the boat 
+            2. Bm + Bc <= K, where Bm/Bc means the number of M/C on the boat
+    (A) Action: + (x, y, 1) or - (a, b, 1), where a >= b and a + b <= K
+    (T) Transition: (x, y, 1) --> (x-a, y-b, 0) or (x, y, 0) --> (x+a, y+b, 1)
+    (T) Goal Test:  (0, 0, 0)
+    (E) Evalute Cost: each transition cost 1
+    (R) Result: Display the path of transition
+
+
+
+====================== Some Mathematical Properties ======================
+1. Number of avaliable states of (m, c, b):
+    num_states = (N + 1) * (N + 2) + 2N
+    
+    e.q. N = 3 => num_states = 26 
+            C
+        0 1 2 3
+      0 V V V V
+      1 V V X X
+    M 2 V V V X
+      3 V V V V
+
+2. Number of avaliable actions (a, b, 1)
+    num_actions = ( K^2 - S^2 + 8K + 2S - 1)/2, where S = ceiling(K/2)
+    
+    e.q. K = 2 => num_actions = 5 * 2
+            C
+        0 1 2
+      0 X V V
+      1 V V X
+    M 2 V X X
+
+    e.q. K = 3 => num_actions = 8 * 2
+            C
+        0 1 2 3
+      0 X V V V
+      1 V V X X
+    M 2 V V X X
+      3 V X X X
+
+3. Relations between two places:
+    * m > c => we must have m = N
+    * m = c => both sides will satisfy the constraint of num_M >= num_C
+
+
