@@ -6,7 +6,7 @@ Author : Albert Chen
 
 This moudle will provide data structure and abstract class for search problems 
 """
-
+from collections import deque
 
 
 
@@ -19,8 +19,11 @@ Problem class is an abstract class. From this class, we will know how to operate
 For using these operations smartly to reach our goal, we need an efficient algorithm.
 For coding an efficient algorithm, we need a good data struct, Node, which will be
 implimented in the next class.
+
+Note that we only need to take care of Problem class for a specified problem. 
+We don't need to revise the Node class, whih is for algorithms. 
 """
-class AbstractProblem(object):
+class Problem(object):
     """ 
     The essential parts of a search problem: SCATTER
         S -> States        : initial and goal states 
@@ -140,7 +143,7 @@ class Node:
         """ Create a child Node after conducting an action on self.state. """
         child_state = problem.transition(self.state, action)
         child_path_cost = self.g + problem.cost(self.state, action, child_state)
-        return Node(child_state, self.state, action, child_path_cost)
+        return Node(child_state, self, action, child_path_cost)
 
     def path_actions(self):
         """ & Return the sequence of actions to go from the root to this node. &"""
@@ -167,5 +170,68 @@ class Node:
 
 
 
+
+
+# ============================ data struct: General Queue ============================
+class AQueue():
+    def __init__(self, mode):
+        self.__modes_list = ['FIFO', 'FILO'] 
+        self.__mode = self.__check_and_set_mode(mode)
+        self.__initial_setting()
+
+    def __call__(self, inData):
+        self.__queue.extend(inData)
+
+    # -------------------- functions for initialization --------------------
+    def __initial_setting(self):        
+        if self.__mode in ['FIFO']:
+            self.__queue = deque()
+            self.__extend = self.__queue.extend
+            self.__pop = self.__queue.popleft
+            return None
+        if self.__mode in ['FILO']:
+            self.__queue = list()
+            self.__extend = self.__queue.extend
+            self.__pop = self.__queue.pop
+            return None
+
+    def __check_and_set_mode(self, mode):
+        assert mode in self.__modes_list, f'mode = {mode} is not avaliable in Gqueue'
+        return mode
+
+
+    # -------------------- functions for overriding --------------------
+    def __repr__(self):
+        return f'{list(self.__queue)}'
+
+    # -------------------- operations for uers --------------------
+    def empty(self):
+        isempty = True if self.__queue else False
+        return isempty
+    
+    def extend(self, data):
+        self.__extend(data)
+
+    def pop(self):
+        return self.__pop()
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    qe = AQueue('FIFO')
+    p1 = Problem(1)
+    p2 = Problem(2)
+    p3 = Problem(3)
+
+    qe([p1, p2])
+    print(qe)
+    qe.pop()
+    print(qe)
+    qe.extend([p3, p2])
+    print(qe)
 
 
